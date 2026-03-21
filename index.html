@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前台快捷工具 By Alan</title>
+<style>
+    /* 将 --msg-ai 的灰色修改为了淡蓝色 #e8f4f8，与进阶框保持绝对统一 */
+    :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; --msg-user: #e3f2fd; --msg-ai: #e8f4f8; --msg-ai-adv: #e8f4f8; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; }
+    .container { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 30px; width: 100%; max-width: 1100px; display: flex; gap: 30px; flex-wrap: wrap; }
+    .left-panel, .right-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
+    
+    h1 { color: var(--txt); text-align: center; margin-bottom: 25px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
+    .title-main { font-size: 28px; }
+    .title-by { font-size: 18px; color: var(--txt-sec); font-weight: 500; }
+    .section-title { font-size: 22px; color: var(--primary); margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #eaeaea; }
+    .section-title:first-child { margin-top: 0; }
+    
+    .input-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+    .date-input-container { position: relative; display: flex; }
+    .date-input-container input[type="text"] { flex: 1; padding-right: 50px; }
+    .date-input-container input[type="date"] { position: absolute; right: 0; width: 50px; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
+    .date-input-container::after { content: " 📅 "; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 18px; z-index: 1; }
+    input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: 0.3s; }
+    input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
+    
+    .result-group { margin-top: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary); }
+    .result-label { font-weight: 500; color: #555; margin-bottom: 10px; }
+    .result { font-size: 22px; color: var(--txt); font-weight: 600; }
+    .result-details, .date-hint, .error, .manual-label { font-size: 14px; color: var(--txt-sec); }
+    .date-hint { font-size: 12px; color: #888; margin-top: 5px; }
+    .error { color: var(--err); display: none; margin-top: 5px; }
+    
+    button { cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; font-size: 16px; }
+    .calculate-btn, .search-btn { background: var(--primary); color: white; padding: 12px 20px; width: 100%; margin-top: 10px; }
+    .calculate-btn:hover, .search-btn:hover { background: var(--hover); }
+    
+    .quick-days { display: flex; gap: 8px; margin-bottom: 15px; }
+    .quick-day-btn { flex: 1; background: #7bb0ee; color: white; padding: 12px 5px; font-weight: 600; }
+    .quick-day-btn:hover { background: #6ba0de; }
+    .quick-day-btn.active { background: #5b90ce; box-shadow: 0 0 0 2px rgba(91, 144, 206, 0.3); }
+    
+    .manual-input-container { margin-top: 10px; }
+    .manual-input, .country-search-container { display: flex; gap: 10px; }
+    .manual-input input, .country-search-container input { flex: 1; }
+    .manual-input button, .country-search-container button, .today-btn, .show-all-countries { flex: 0 0 auto; background: #f0f0f0; color: #333; }
+    .country-search-container button { background: #7bb0ee; color: white; padding: 0 20px; }
+    .country-search-container button:hover { background: #6ba0de; }
+    .manual-input button { padding: 0 20px; }
+    .today-btn { padding: 6px 10px; font-size: 12px; margin-top: 5px; }
+    .show-all-container { text-align: right; margin-bottom: 15px; }
+    .show-all-countries { padding: 6px 12px; font-size: 13px; }
+    .manual-input button:hover, .today-btn:hover, .show-all-countries:hover { background: #e0e0e0; }
+
+    .country-results { margin-top: 15px; max-height: 250px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 10px; }
+    .country-results-header { font-size: 14px; color: var(--txt-sec); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #f0f0f0; }
+    .country-item { padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    .country-item:last-child { border-bottom: none; }
+    .country-name { font-weight: 500; }
+    .country-code { color: var(--primary); background: #f0f7ff; padding: 4px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 15px; }
+    .no-results { text-align: center; color: #888; padding: 20px; }
+    
+    /* ================= AI 对话框样式 ================= */
+    .ai-container { display: flex; flex-direction: column; height: 100%; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
+    .ai-tabs { display: flex; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .ai-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 15px; }
+    .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
+    .ai-tab:hover:not(.active) { background: #e8e8e8; }
+    
+    .password-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #eaeaea; display: flex; align-items: center; gap: 10px; }
+    .password-bar span { font-size: 14px; color: #555; font-weight: 600; white-space: nowrap; }
+    .password-bar input { padding: 6px 10px; font-size: 14px; flex: 1; border: 1px solid #ddd; border-radius: 4px; }
+    
+    .chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; min-height: 400px; display: flex; flex-direction: column; gap: 15px; }
+    .msg-row { display: flex; width: 100%; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-row.ai { justify-content: flex-start; }
+    .msg-bubble { max-width: 90%; padding: 12px 16px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+    .msg-row.user .msg-bubble { background: var(--msg-user); color: #0d47a1; border-bottom-right-radius: 2px; }
+    /* AI的默认气泡已经改为淡蓝色 */
+    .msg-row.ai .msg-bubble { background: var(--msg-ai); color: #333; border-bottom-left-radius: 2px; }
+    
+    /* 进阶框特殊样式：同为淡蓝色背景，但带有左侧蓝色高亮细边 */
+    .msg-row.ai-adv { justify-content: flex-start; margin-top: -5px; }
+    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 14px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
+
+    .loading-dots::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
+    @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
+    
+    .ai-input-area { padding: 15px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 10px; }
+    .ai-input-area input { flex: 1; }
+    .ai-input-area button { padding: 0 20px; background: var(--primary); color: white; font-weight: 600; }
+    .ai-input-area button:hover { background: var(--hover); }
+    .ai-input-area button:disabled { background: #ccc; cursor: not-allowed; }
+
+    .footer { text-align: center; width: 100%; margin-top: 25px; color: #777; font-size: 14px; border-top: 1px solid #eee; padding-top: 15px; }
+    .copyright { font-weight: 500; color: #555; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1><span class="title-main">前台快捷工具</span><span class="title-by">By Alan</span></h1>
+    
+    <div class="left-panel">
+        <div class="section-title">入境有效期计算</div>
+        <div class="input-group">
+            <label for="startDate">入境日期</label>
+            <div class="date-input-container">
+                <input type="text" id="startDate" placeholder="如：2023/10/01 或 2023-10-01">
+                <input type="date" id="startDatePicker">
+            </div>
+            <button class="today-btn" id="todayBtn">设为今天</button>
+            <div class="error" id="dateError">请输入有效的日期</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="daysToAdd">停留天数</label>
+            <div class="quick-days">
+                <button class="quick-day-btn" data-days="30">30天</button>
+                <button class="quick-day-btn" data-days="60">60天</button>
+                <button class="quick-day-btn" data-days="90">90天</button>
+                <button class="quick-day-btn" data-days="120">120天</button>
+                <button class="quick-day-btn" data-days="180">180天</button>
+            </div>
+            <div class="manual-input-container">
+                <span class="manual-label">手动输入</span>
+                <div class="manual-input">
+                    <input type="number" id="daysToAdd" min="1" placeholder="输入其他天数">
+                    <button id="manualCalculateBtn">计算</button>
+                </div>
+            </div>
+            <div class="error" id="daysError">请输入有效的天数（≥1）</div>
+        </div>
+        
+        <div class="result-group">
+            <div class="result-label">计算结果</div>
+            <div class="result" id="result">请输入入境日期和停留天数进行计算</div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+        
+        <div class="section-title country-title">免签国家查询（79+2）</div>
+        <div class="country-search-container">
+            <input type="text" id="countrySearch" placeholder="输入国家名称或代码，如：泰国 或 THA">
+            <button id="searchBtn">查找</button>
+        </div>
+        <div class="show-all-container">
+            <button class="show-all-countries" id="showAllBtn">显示全部免签国家</button>
+        </div>
+        <div class="country-results" id="countryResults">
+            <div class="country-results-header">请输入关键词进行查询或点击"显示全部免签国家"</div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="section-title" style="border-bottom:none; margin-bottom:5px;">英语助理</div>
+        <div class="ai-container">
+            <div class="ai-tabs">
+                <div class="ai-tab active" data-action="pronunciation">发音辅助</div>
+                <div class="ai-tab" data-action="short_translation">短语翻译</div>
+                <div class="ai-tab" data-action="long_translation">长文翻译</div>
+            </div>
+            
+            <div class="password-bar" id="passwordBar">
+                <span>🔒 授权码：</span>
+                <input type="password" id="apiPasswordInput" placeholder="请输入访问密码">
+            </div>
+
+            <div class="chat-window" id="chatWindow"></div>
+            
+            <div class="ai-input-area">
+                <input type="text" id="aiInput" placeholder="输入外宾姓名，例如：Schmidt">
+                <button id="aiSendBtn">发送</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="copyright">上海和平饭店©️2025</div>
+    </div>
+</div>
+
+<script>
+// ==================== 全局配置 ====================
+const API_URL = "https://api.alanwangsx.xyz";
+const AUTH_KEY = "fd_tools_auth_token"; 
+// =================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const $ = id => document.getElementById(id);
+    
+    // ======== 左侧逻辑 ========
+    const els = {
+        sDate: $('startDate'), sPicker: $('startDatePicker'), days: $('daysToAdd'),
+        calcBtn: $('manualCalculateBtn'), res: $('result'), resDet: $('resultDetails'),
+        dErr: $('dateError'), dayErr: $('daysError'), today: $('todayBtn'),
+        search: $('countrySearch'), sBtn: $('searchBtn'), showAll: $('showAllBtn'),
+        cRes: $('countryResults'), qBtns: document.querySelectorAll('.quick-day-btn')
+    };
+    
+    const countryData = "文莱,BRN|法国,FRA|德国,DEU|意大利,ITA|西班牙,ESP|荷兰,NLD|瑞士,CHE|爱尔兰,IRL|匈牙利,HUN|奥地利,AUT|比利时,BEL|卢森堡,LUX|新西兰,NZL|澳大利亚,AUS|波兰,POL|葡萄牙,PRT|希腊,GRC|塞浦路斯,CYP|斯洛文尼亚,SVN|斯洛伐克,SVK|挪威,NOR|芬兰,FIN|丹麦,DNK|冰岛,ISL|安道尔,AND|摩纳哥,MCO|列支敦士登,LIE|韩国,KOR|保加利亚,BGR|罗马尼亚,ROU|克罗地亚,HRV|黑山,MNE|北马其顿,MKD|马耳他,MLT|爱沙尼亚,EST|拉脱维亚,LVA|日本,JPN|巴西,BRA|阿根廷,ARG|智利,CHL|秘鲁,PER|乌拉圭,URY|沙特,SAU|阿曼,OMN|科威特,KWT|巴林,BHR|阿尔巴尼亚,ALB|阿联酋,ARE|安提瓜和巴布达,ATG|巴巴多斯,BRB|巴哈马,BHS|白俄罗斯,BLR|波黑,BIH|多米尼克,DMA|厄瓜多尔,ECU|斐济,FJI|格林纳达,GRD|格鲁吉亚,GEO|哈萨克斯坦,KAZ|卡塔尔,QAT|马尔代夫,MDV|毛里求斯,MUS|萨摩亚,WSM|塞尔维亚,SRB|塞舌尔,SYC|圣马力诺,SMR|苏里南,SUR|所罗门群岛,SLB|泰国,THA|汤加,TON|乌兹别克斯坦,UZB|新加坡,SGP|亚美尼亚,ARM|阿塞拜疆,AZE|马来西亚,MYS|瑞典,SWE|俄罗斯,RUS|英国,GBR|加拿大,CAN|朝鲜（因公普通护照）,PRK|蒙古（因公普通护照）,MNG";
+    const countries = countryData.split('|').map(s => { const [name, code] = s.split(','); return { name, code }; });
+
+    const fmt = (d, type = '/') => {
+        const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), da = String(d.getDate()).padStart(2,'0');
+        return type === '/' ? `${y}/${m}/${da}` : `${y}-${m}-${da}`;
+    };
+    const parse = (str) => {
+        if(!str) return null;
+        const clean = str.replace(/[年月日-]/g, '/');
+        const d = new Date(clean);
+        return isNaN(d.getTime()) ? null : d;
+    };
+    const setToday = () => { const now = new Date(); els.sDate.value = fmt(now); els.sPicker.value = fmt(now, '-'); };
+    const clearQuick = () => els.qBtns.forEach(b => b.classList.remove('active'));
+    const calc = () => {
+        els.dErr.style.display = els.dayErr.style.display = 'none';
+        const d = parse(els.sDate.value);
+        const days = parseInt(els.days.value);
+        if (!d) return els.dErr.style.display = 'block';
+        if (isNaN(days) || days < 1) return els.dayErr.style.display = 'block';
+        const newDate = new Date(d);
+        newDate.setDate(d.getDate() + days);
+        els.res.innerHTML = `<div>${fmt(newDate)}</div>`;
+        els.resDet.innerHTML = `<div>（有效期至，从 ${fmt(d)} 起算 ${days} 天）</div>`;
+    };
+    setToday();
+    els.today.addEventListener('click', setToday);
+    els.qBtns.forEach(btn => btn.addEventListener('click', function() { clearQuick(); this.classList.add('active'); els.days.value = this.dataset.days; calc(); }));
+    els.sPicker.addEventListener('change', function() { els.sDate.value = fmt(new Date(this.value)); });
+    els.sDate.addEventListener('change', function() { const d = parse(this.value); if(d) els.sPicker.value = fmt(d, '-'); });
+    [els.calcBtn, els.days].forEach(el => { el.addEventListener(el === els.days ? 'keypress' : 'click', e => { if (e.type === 'click' || e.key === 'Enter') { clearQuick(); calc(); } }); });
+
+    const renderCountries = list => {
+        if (!list.length) return els.cRes.innerHTML = '<div class="country-results-header">以下是搜索到的免签国家：</div><div class="no-results">未找到匹配的国家</div>';
+        const html = list.map(c => `<div class="country-item"><span class="country-name">${c.name}</span><span class="country-code">${c.code}</span></div>`).join('');
+        els.cRes.innerHTML = `<div class="country-results-header">以下是搜索到的免签国家：</div>${html}`;
+    };
+    const search = () => {
+        const term = els.search.value.trim().toLowerCase();
+        if (!term) return els.cRes.innerHTML = '<div class="country-results-header">请输入关键词进行查询或点击"显示全部免签国家"</div>';
+        renderCountries(countries.filter(c => c.name.includes(term) || c.code.toLowerCase().includes(term)));
+    };
+    els.sBtn.addEventListener('click', search);
+    els.showAll.addEventListener('click', () => renderCountries(countries));
+    els.search.addEventListener('keypress', e => e.key === 'Enter' && search());
+
+    // ======== 右侧 AI 逻辑 ========
+    const aiTabs = document.querySelectorAll('.ai-tab');
+    const chatWindow = $('chatWindow');
+    const aiInput = $('aiInput');
+    const aiSendBtn = $('aiSendBtn');
+    const passwordBar = $('passwordBar');
+    const pwdInput = $('apiPasswordInput');
+    
+    let currentAction = 'pronunciation'; 
+
+    const getValidPassword = () => {
+        const savedAuth = JSON.parse(localStorage.getItem(AUTH_KEY));
+        if (savedAuth && savedAuth.expiry > Date.now()) {
+            passwordBar.style.display = 'none';
+            return savedAuth.token;
+        }
+        localStorage.removeItem(AUTH_KEY);
+        passwordBar.style.display = 'flex';
+        return pwdInput.value.trim();
+    };
+    getValidPassword();
+
+    const updatePlaceholder = (action) => {
+        if(action === 'pronunciation') aiInput.placeholder = "输入外宾姓名，例如：Schmidt";
+        else if (action === 'short_translation') aiInput.placeholder = "输入短语（限中6字/英8词，禁中英混输）";
+        else aiInput.placeholder = "输入长文（限中100字/英200词，禁中英混输）";
+    }
+
+    aiTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            aiTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentAction = tab.dataset.action;
+            updatePlaceholder(currentAction);
+            aiInput.value = '';
+            chatWindow.innerHTML = '';
+        });
+    });
+
+    const appendMessage = (text, sender, isLoading = false, type = 'normal') => {
+        const row = document.createElement('div');
+        row.className = `msg-row ${sender === 'ai' && type === 'adv' ? 'ai-adv' : sender}`;
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        if (isLoading) bubble.classList.add('loading-dots');
+        else bubble.innerText = text; 
+        row.appendChild(bubble);
+        chatWindow.appendChild(row);
+        chatWindow.scrollTop = chatWindow.scrollHeight; 
+        return bubble; 
+    };
+
+    const preValidate = (action, text) => {
+        if (!text) return { valid: false, msg: null }; 
+
+        const hasChinese = /[\u4e00-\u9fa5]/.test(text);
+        const hasEnglish = /[a-zA-Z]/.test(text);
+
+        if (action === 'short_translation' || action === 'long_translation') {
+            if (hasChinese && hasEnglish) return { valid: false, msg: "请单独输入中文或英文" };
+            
+            if (action === 'short_translation') {
+                if (hasChinese && text.replace(/[^\u4e00-\u9fa5]/g, "").length > 6) return { valid: false, msg: "提示字数超出短语上限（中文限6字）" };
+                if (!hasChinese && text.trim().split(/\s+/).length > 8) return { valid: false, msg: "提示字数超出短语上限（英文限8词）" };
+            } else {
+                if (hasChinese && text.replace(/[^\u4e00-\u9fa5]/g, "").length > 100) return { valid: false, msg: "提示字数超出长文上限（中文限100字）" };
+                if (!hasChinese && text.trim().split(/\s+/).length > 200) return { valid: false, msg: "提示字数超出长文上限（英文限200词）" };
+            }
+        }
+        return { valid: true };
+    };
+
+    const handleSend = async () => {
+        const text = aiInput.value.trim();
+        const userPassword = getValidPassword();
+
+        if (!text) return;
+        if (!userPassword) {
+            chatWindow.innerHTML = ''; 
+            appendMessage('⚠️ 请先在上方输入授权码', 'ai');
+            return;
+        }
+
+        const validationResult = preValidate(currentAction, text);
+        if (!validationResult.valid && validationResult.msg) {
+            chatWindow.innerHTML = ''; 
+            appendMessage(validationResult.msg, 'ai'); 
+            return; 
+        }
+
+        chatWindow.innerHTML = '';
+        appendMessage(text, 'user');
+        aiInput.value = '';
+        aiInput.focus();
+        
+        aiSendBtn.disabled = true;
+        aiInput.disabled = true;
+        let aiBubble = appendMessage('...', 'ai', true);
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: currentAction, text: text, password: userPassword })
+            });
+
+            aiBubble.classList.remove('loading-dots');
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    aiBubble.innerText = "❌ 授权码错误，请重新输入。";
+                    aiBubble.style.color = "var(--err)";
+                    localStorage.removeItem(AUTH_KEY); 
+                    passwordBar.style.display = 'flex'; 
+                } else {
+                    aiBubble.innerText = "抱歉，请求失败，请稍后再试。";
+                    aiBubble.style.color = "var(--err)";
+                }
+                return; 
+            }
+
+            const expiry = Date.now() + 3600000;
+            localStorage.setItem(AUTH_KEY, JSON.stringify({ token: userPassword, expiry }));
+            passwordBar.style.display = 'none'; 
+            
+            aiBubble.innerText = ''; 
+            
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let done = false;
+            let buffer = ""; 
+            let hasSplit = false; 
+
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                if (value) {
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                            try {
+                                const parsed = JSON.parse(line.slice(6));
+                                const delta = parsed.choices[0].delta.content;
+                                if (delta) {
+                                    if (currentAction === 'pronunciation' && !hasSplit) {
+                                        buffer += delta;
+                                        if (buffer.includes('|||')) {
+                                            hasSplit = true;
+                                            const parts = buffer.split('|||');
+                                            aiBubble.innerText = parts[0].trim(); 
+                                            // 自动创建带有蓝色高亮边框的进阶气泡
+                                            aiBubble = appendMessage(parts[1].trimStart(), 'ai', false, 'adv');
+                                        } else {
+                                            aiBubble.innerText += delta;
+                                        }
+                                    } else {
+                                        aiBubble.innerText += delta;
+                                    }
+                                    chatWindow.scrollTop = chatWindow.scrollHeight; 
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            }
+
+        } catch (error) {
+            aiBubble.classList.remove('loading-dots');
+            aiBubble.innerText = "网络请求异常，请检查连接或稍后再试。";
+            aiBubble.style.color = "var(--err)";
+        } finally {
+            aiSendBtn.disabled = false;
+            aiInput.disabled = false;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    };
+
+    aiSendBtn.addEventListener('click', handleSend);
+    aiInput.addEventListener('keypress', e => e.key === 'Enter' && handleSend());
+});
+</script>
+</body>
+</html>
