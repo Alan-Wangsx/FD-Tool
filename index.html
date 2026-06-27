@@ -70,10 +70,6 @@
     .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
     .ai-tab:hover:not(.active) { background: #e8e8e8; }
     
-    .password-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #eaeaea; display: flex; align-items: center; gap: 10px; }
-    .password-bar span { font-size: 14px; color: #555; font-weight: 600; white-space: nowrap; }
-    .password-bar input { padding: 6px 10px; font-size: 14px; flex: 1; border: 1px solid #ddd; border-radius: 4px; }
-    
     .chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; min-height: 400px; display: flex; flex-direction: column; gap: 15px; }
     .msg-row { display: flex; width: 100%; }
     .msg-row.user { justify-content: flex-end; }
@@ -162,11 +158,6 @@
                 <div class="ai-tab" data-action="short_translation">短语翻译</div>
                 <div class="ai-tab" data-action="long_translation">长文翻译</div>
             </div>
-            
-            <div class="password-bar" id="passwordBar">
-                <span>🔒 授权码：</span>
-                <input type="password" id="apiPasswordInput" placeholder="请输入访问密码">
-            </div>
 
             <div class="chat-window" id="chatWindow"></div>
             
@@ -185,7 +176,6 @@
 <script>
 // ==================== 全局配置 ====================
 const API_URL = "https://api.alanwangsx.xyz";
-const AUTH_KEY = "fd_tools_auth_token"; 
 // =================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -252,22 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatWindow = $('chatWindow');
     const aiInput = $('aiInput');
     const aiSendBtn = $('aiSendBtn');
-    const passwordBar = $('passwordBar');
-    const pwdInput = $('apiPasswordInput');
     
     let currentAction = 'pronunciation'; 
-
-    const getValidPassword = () => {
-        const savedAuth = JSON.parse(localStorage.getItem(AUTH_KEY));
-        if (savedAuth && savedAuth.expiry > Date.now()) {
-            passwordBar.style.display = 'none';
-            return savedAuth.token;
-        }
-        localStorage.removeItem(AUTH_KEY);
-        passwordBar.style.display = 'flex';
-        return pwdInput.value.trim();
-    };
-    getValidPassword();
 
     const updatePlaceholder = (action) => {
         if(action === 'pronunciation') aiInput.placeholder = "输入外宾姓名，例如：Schmidt";
@@ -321,14 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleSend = async () => {
         const text = aiInput.value.trim();
-        const userPassword = getValidPassword();
 
         if (!text) return;
-        if (!userPassword) {
-            chatWindow.innerHTML = ''; 
-            appendMessage('⚠️ 请先在上方输入授权码', 'ai');
-            return;
-        }
 
         const validationResult = preValidate(currentAction, text);
         if (!validationResult.valid && validationResult.msg) {
@@ -350,28 +320,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: currentAction, text: text, password: userPassword })
+                body: JSON.stringify({ action: currentAction, text: text }) // 移除了 password 字段
             });
 
             aiBubble.classList.remove('loading-dots');
             
             if (!response.ok) {
-                if (response.status === 401) {
-                    aiBubble.innerText = "❌ 授权码错误，请重新输入。";
-                    aiBubble.style.color = "var(--err)";
-                    localStorage.removeItem(AUTH_KEY); 
-                    passwordBar.style.display = 'flex'; 
-                } else {
-                    aiBubble.innerText = "抱歉，请求失败，请稍后再试。";
-                    aiBubble.style.color = "var(--err)";
-                }
+                aiBubble.innerText = "抱歉，请求失败，请稍后再试。";
+                aiBubble.style.color = "var(--err)";
                 return; 
             }
 
-            const expiry = Date.now() + 3600000;
-            localStorage.setItem(AUTH_KEY, JSON.stringify({ token: userPassword, expiry }));
-            passwordBar.style.display = 'none'; 
-            
             aiBubble.innerText = ''; 
             
             const reader = response.body.getReader();
