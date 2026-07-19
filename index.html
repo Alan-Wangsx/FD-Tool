@@ -50,7 +50,7 @@
     .country-search-container button:hover { background: #6ba0de; }
     .manual-input button { padding: 0 20px; }
     
-    /* 调整快速操作按钮组的样式，确保对齐 */
+    /* 日期微调操作按钮组 */
     .date-action-btns { display: flex; gap: 8px; margin-top: 8px; }
     .today-btn { padding: 6px 10px; font-size: 12px; }
     
@@ -122,14 +122,14 @@
         <div class="input-group">
             <label for="startDate">入境日期</label>
             <div class="date-input-container">
-                <input type="text" id="startDate" placeholder="如：2023/10/01 或 2023-10-01">
+                <input type="text" id="startDate" placeholder="如：2026/07/15 或 2026-07-15">
                 <input type="date" id="startDatePicker">
             </div>
-            <!-- 新增：日期微调按钮组 -->
+            <!-- 日期微调按钮组 -->
             <div class="date-action-btns">
                 <button class="today-btn" id="todayBtn">设为今天</button>
-                <button class="today-btn" id="prevDayBtn">日期 -1</button>
                 <button class="today-btn" id="nextDayBtn">日期 +1</button>
+                <button class="today-btn" id="prevDayBtn">日期 -1</button>
             </div>
             <div class="error" id="dateError">请输入有效的日期</div>
         </div>
@@ -193,7 +193,7 @@
     </div>
     
     <div class="footer">
-        <div class="copyright">上海和平饭店©️2025</div>
+        <div class="copyright">上海和平饭店©️2026</div>
     </div>
 </div>
 
@@ -242,12 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
     nameCaseInput.addEventListener('keypress', e => e.key === 'Enter' && convertNameCase());
 
 
-    // ======== 左侧原逻辑 + 日期微调功能 ========
+    // ======== 左侧原逻辑 + 全局实时联动刷新 ========
     const els = {
         sDate: $('startDate'), sPicker: $('startDatePicker'), days: $('daysToAdd'),
         calcBtn: $('manualCalculateBtn'), res: $('result'), resDet: $('resultDetails'),
         dErr: $('dateError'), dayErr: $('daysError'), today: $('todayBtn'),
-        prevDayBtn: $('prevDayBtn'), nextDayBtn: $('nextDayBtn'), // 绑定微调按钮
+        prevDayBtn: $('prevDayBtn'), nextDayBtn: $('nextDayBtn'), 
         search: $('countrySearch'), sBtn: $('searchBtn'), showAll: $('showAllBtn'),
         cRes: $('countryResults'), qBtns: document.querySelectorAll('.quick-day-btn')
     };
@@ -267,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const clearQuick = () => els.qBtns.forEach(b => b.classList.remove('active'));
     
+    // 核心计算逻辑
     const calc = () => {
         els.dErr.style.display = els.dayErr.style.display = 'none';
         const d = parse(els.sDate.value);
@@ -279,38 +280,79 @@ document.addEventListener('DOMContentLoaded', () => {
         els.resDet.innerHTML = `<div>（有效期至，从 ${fmt(d)} 起算 ${days} 天）</div>`;
     };
     
-    // 设为今天逻辑（加入自动计算）
+    // 设为今天
     const setToday = () => { 
         const now = new Date(); 
         els.sDate.value = fmt(now); 
         els.sPicker.value = fmt(now, '-'); 
-        if (els.days.value) calc();
+        if (els.days.value) calc(); 
     };
 
-    // 新增：日期微调逻辑
+    // 日期微调 (+1 / -1)
     const adjustDate = (offset) => {
         const current = parse(els.sDate.value);
         if (current) {
             current.setDate(current.getDate() + offset);
             els.sDate.value = fmt(current);
             els.sPicker.value = fmt(current, '-');
-            if (els.days.value) calc(); // 如果下方已经填了天数，立刻联动计算结果
+            if (els.days.value) calc();
         } else {
-            els.dErr.style.display = 'block'; // 若原日期为空或非法，则报错提示
+            els.dErr.style.display = 'block';
         }
     };
 
     setToday();
     
-    // 事件绑定
+    // ====== 绑定所有联动事件 ======
+
     els.today.addEventListener('click', setToday);
     els.prevDayBtn.addEventListener('click', () => adjustDate(-1));
     els.nextDayBtn.addEventListener('click', () => adjustDate(1));
     
-    els.qBtns.forEach(btn => btn.addEventListener('click', function() { clearQuick(); this.classList.add('active'); els.days.value = this.dataset.days; calc(); }));
-    els.sPicker.addEventListener('change', function() { els.sDate.value = fmt(new Date(this.value)); });
-    els.sDate.addEventListener('change', function() { const d = parse(this.value); if(d) els.sPicker.value = fmt(d, '-'); });
-    [els.calcBtn, els.days].forEach(el => { el.addEventListener(el === els.days ? 'keypress' : 'click', e => { if (e.type === 'click' || e.key === 'Enter') { clearQuick(); calc(); } }); });
+    // 点击快速天数
+    els.qBtns.forEach(btn => btn.addEventListener('click', function() { 
+        clearQuick(); 
+        this.classList.add('active'); 
+        els.days.value = this.dataset.days; 
+        calc(); 
+    }));
+    
+    // 在日历选择器里挑日子（瞬间触发联动）
+    els.sPicker.addEventListener('change', function() { 
+        els.sDate.value = fmt(new Date(this.value)); 
+        if (els.days.value) calc();
+    });
+    
+    // 手动修改前面的日期框（瞬间触发联动）
+    els.sDate.addEventListener('change', function() { 
+        const d = parse(this.value); 
+        if (d) {
+            els.sPicker.value = fmt(d, '-'); 
+            if (els.days.value) calc();
+        } else if (this.value === '') {
+            els.res.innerText = '请输入入境日期和停留天数进行计算';
+            els.resDet.innerText = '';
+            els.dErr.style.display = 'none';
+        }
+    });
+
+    // 实时监听天数输入框：用户正在打字时就触发刷新
+    els.days.addEventListener('input', function() {
+        clearQuick();
+        if (this.value === '') {
+            // 如果用户删光了数字，恢复默认提示，不报错
+            els.res.innerText = '请输入入境日期和停留天数进行计算';
+            els.resDet.innerText = '';
+            els.dayErr.style.display = 'none';
+        } else {
+            calc();
+        }
+    });
+
+    // 兜底保留：为了老习惯点击计算按钮的人
+    els.calcBtn.addEventListener('click', () => { clearQuick(); calc(); });
+
+    // ----------------------------------
 
     const renderCountries = list => {
         if (!list.length) return els.cRes.innerHTML = '<div class="country-results-header">以下是搜索到的免签国家：</div><div class="no-results">未找到匹配的国家</div>';
