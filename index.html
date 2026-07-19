@@ -49,7 +49,11 @@
     .country-search-container button { background: #7bb0ee; color: white; padding: 0 20px; }
     .country-search-container button:hover { background: #6ba0de; }
     .manual-input button { padding: 0 20px; }
-    .today-btn { padding: 6px 10px; font-size: 12px; margin-top: 5px; }
+    
+    /* 调整快速操作按钮组的样式，确保对齐 */
+    .date-action-btns { display: flex; gap: 8px; margin-top: 8px; }
+    .today-btn { padding: 6px 10px; font-size: 12px; }
+    
     .show-all-container { text-align: right; margin-bottom: 15px; }
     .show-all-countries { padding: 6px 12px; font-size: 13px; }
     .manual-input button:hover, .today-btn:hover, .show-all-countries:hover { background: #e0e0e0; }
@@ -121,7 +125,12 @@
                 <input type="text" id="startDate" placeholder="如：2023/10/01 或 2023-10-01">
                 <input type="date" id="startDatePicker">
             </div>
-            <button class="today-btn" id="todayBtn">设为今天</button>
+            <!-- 新增：日期微调按钮组 -->
+            <div class="date-action-btns">
+                <button class="today-btn" id="todayBtn">设为今天</button>
+                <button class="today-btn" id="prevDayBtn">日期 -1</button>
+                <button class="today-btn" id="nextDayBtn">日期 +1</button>
+            </div>
             <div class="error" id="dateError">请输入有效的日期</div>
         </div>
         
@@ -233,11 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
     nameCaseInput.addEventListener('keypress', e => e.key === 'Enter' && convertNameCase());
 
 
-    // ======== 左侧原逻辑 ========
+    // ======== 左侧原逻辑 + 日期微调功能 ========
     const els = {
         sDate: $('startDate'), sPicker: $('startDatePicker'), days: $('daysToAdd'),
         calcBtn: $('manualCalculateBtn'), res: $('result'), resDet: $('resultDetails'),
         dErr: $('dateError'), dayErr: $('daysError'), today: $('todayBtn'),
+        prevDayBtn: $('prevDayBtn'), nextDayBtn: $('nextDayBtn'), // 绑定微调按钮
         search: $('countrySearch'), sBtn: $('searchBtn'), showAll: $('showAllBtn'),
         cRes: $('countryResults'), qBtns: document.querySelectorAll('.quick-day-btn')
     };
@@ -255,8 +265,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = new Date(clean);
         return isNaN(d.getTime()) ? null : d;
     };
-    const setToday = () => { const now = new Date(); els.sDate.value = fmt(now); els.sPicker.value = fmt(now, '-'); };
     const clearQuick = () => els.qBtns.forEach(b => b.classList.remove('active'));
+    
     const calc = () => {
         els.dErr.style.display = els.dayErr.style.display = 'none';
         const d = parse(els.sDate.value);
@@ -268,8 +278,35 @@ document.addEventListener('DOMContentLoaded', () => {
         els.res.innerHTML = `<div>${fmt(newDate)}</div>`;
         els.resDet.innerHTML = `<div>（有效期至，从 ${fmt(d)} 起算 ${days} 天）</div>`;
     };
+    
+    // 设为今天逻辑（加入自动计算）
+    const setToday = () => { 
+        const now = new Date(); 
+        els.sDate.value = fmt(now); 
+        els.sPicker.value = fmt(now, '-'); 
+        if (els.days.value) calc();
+    };
+
+    // 新增：日期微调逻辑
+    const adjustDate = (offset) => {
+        const current = parse(els.sDate.value);
+        if (current) {
+            current.setDate(current.getDate() + offset);
+            els.sDate.value = fmt(current);
+            els.sPicker.value = fmt(current, '-');
+            if (els.days.value) calc(); // 如果下方已经填了天数，立刻联动计算结果
+        } else {
+            els.dErr.style.display = 'block'; // 若原日期为空或非法，则报错提示
+        }
+    };
+
     setToday();
+    
+    // 事件绑定
     els.today.addEventListener('click', setToday);
+    els.prevDayBtn.addEventListener('click', () => adjustDate(-1));
+    els.nextDayBtn.addEventListener('click', () => adjustDate(1));
+    
     els.qBtns.forEach(btn => btn.addEventListener('click', function() { clearQuick(); this.classList.add('active'); els.days.value = this.dataset.days; calc(); }));
     els.sPicker.addEventListener('change', function() { els.sDate.value = fmt(new Date(this.value)); });
     els.sDate.addEventListener('change', function() { const d = parse(this.value); if(d) els.sPicker.value = fmt(d, '-'); });
@@ -369,7 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let aiBubble = appendMessage('...', 'ai', true);
 
         try {
-            // 注意：网络请求中去除了 password 参数
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
