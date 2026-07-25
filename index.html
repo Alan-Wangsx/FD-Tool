@@ -8,38 +8,45 @@
     :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; --msg-user: #e3f2fd; --msg-ai: #e8f4f8; --msg-ai-adv: #e8f4f8; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
-    body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
-    .container { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px; width: 100%; max-width: 1100px; display: flex; gap: 20px; flex-wrap: wrap; }
-    .left-panel, .right-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
+    body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 25px; }
     
-    h1 { color: var(--txt); text-align: center; margin-bottom: 15px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
-    .title-main { font-size: 26px; }
-    .title-by { font-size: 16px; color: var(--txt-sec); font-weight: 500; }
-    .section-title { font-size: 20px; color: var(--primary); margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #eaeaea; }
-    .section-title:first-child { margin-top: 0; }
+    /* 核心修改：宽度扩展至 1450px，采用三栏布局 */
+    .container { background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); padding: 30px; width: 100%; max-width: 1450px; display: flex; gap: 30px; flex-wrap: wrap; }
     
-    .input-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 6px; color: #555; font-weight: 500; font-size: 14px; }
+    .panel-left, .panel-mid, .panel-right { display: flex; flex-direction: column; }
+    .panel-left { flex: 1.1; min-width: 320px; }
+    .panel-mid { flex: 1; min-width: 300px; }
+    .panel-right { flex: 1.4; min-width: 380px; }
+    
+    h1 { color: var(--txt); text-align: center; margin-bottom: 25px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
+    .title-main { font-size: 28px; }
+    .title-by { font-size: 18px; color: var(--txt-sec); font-weight: 500; }
+    
+    .section-title { font-size: 22px; color: var(--primary); margin: 0 0 15px; padding-bottom: 8px; border-bottom: 2px solid #eaeaea; }
+    
+    /* 恢复舒适的输入框与按钮尺寸 */
+    .input-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; font-size: 15px; }
     .date-input-container { position: relative; display: flex; }
     .date-input-container input[type="text"] { flex: 1; padding-right: 50px; }
     .date-input-container input[type="date"] { position: absolute; right: 0; width: 50px; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-    .date-input-container::after { content: " 📅 "; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px; z-index: 1; }
-    input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; transition: 0.3s; }
+    .date-input-container::after { content: " 📅 "; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 18px; z-index: 1; }
+    
+    input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: 0.3s; }
     input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
     
-    .result-group { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary); }
-    .result-label { font-weight: 500; color: #555; margin-bottom: 8px; font-size: 14px;}
-    .result { font-size: 20px; color: var(--txt); font-weight: 600; }
-    .result-details, .date-hint, .error, .manual-label { font-size: 13px; color: var(--txt-sec); }
-    .date-hint { font-size: 12px; color: #888; margin-top: 5px; }
+    .result-group { margin-top: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary); }
+    .result-label { font-weight: 500; color: #555; margin-bottom: 10px; font-size: 15px;}
+    .result { font-size: 22px; color: var(--txt); font-weight: 600; }
+    .result-details, .date-hint, .error, .manual-label { font-size: 14px; color: var(--txt-sec); }
     .error { color: var(--err); display: none; margin-top: 5px; }
     
-    button { cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; font-size: 15px; }
-    .calculate-btn, .search-btn { background: var(--primary); color: white; padding: 10px 15px; width: 100%; margin-top: 10px; }
+    button { cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; font-size: 16px; }
+    .calculate-btn, .search-btn { background: var(--primary); color: white; padding: 12px 20px; width: 100%; margin-top: 10px; }
     .calculate-btn:hover, .search-btn:hover { background: var(--hover); }
     
-    .quick-days { display: flex; gap: 8px; margin-bottom: 12px; }
-    .quick-day-btn { flex: 1; background: #7bb0ee; color: white; padding: 8px 5px; font-weight: 600; }
+    .quick-days { display: flex; gap: 8px; margin-bottom: 15px; }
+    .quick-day-btn { flex: 1; background: #7bb0ee; color: white; padding: 12px 5px; font-weight: 600; }
     .quick-day-btn:hover { background: #6ba0de; }
     .quick-day-btn.active { background: #5b90ce; box-shadow: 0 0 0 2px rgba(91, 144, 206, 0.3); }
     
@@ -51,53 +58,51 @@
     .country-search-container button:hover { background: #6ba0de; }
     .manual-input button { padding: 0 20px; }
     
-    .date-action-btns { display: flex; gap: 8px; margin-top: 8px; }
-    .today-btn { padding: 6px 10px; font-size: 12px; }
+    .date-action-btns { display: flex; gap: 8px; margin-top: 10px; }
+    .today-btn { padding: 8px 12px; font-size: 13px; font-weight: 500; }
     
-    .show-all-container { text-align: right; margin-bottom: 10px; }
-    .show-all-countries { padding: 6px 12px; font-size: 13px; }
+    .show-all-container { text-align: right; margin-bottom: 15px; }
+    .show-all-countries { padding: 8px 15px; font-size: 14px; }
     .manual-input button:hover, .today-btn:hover, .show-all-countries:hover { background: #e0e0e0; }
 
-    .country-results { margin-top: 10px; max-height: 160px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 10px; }
-    .country-results-header { font-size: 13px; color: var(--txt-sec); margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #f0f0f0; }
-    .country-item { padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    /* 国家列表恢复高度 */
+    .country-results { margin-top: 15px; flex: 1; max-height: 480px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 12px; background: #fff; }
+    .country-results-header { font-size: 14px; color: var(--txt-sec); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+    .country-item { padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
     .country-item:last-child { border-bottom: none; }
-    .country-name { font-weight: 500; font-size: 14px; }
-    .country-code { color: var(--primary); background: #f0f7ff; padding: 3px 6px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 14px; }
-    .no-results { text-align: center; color: #888; padding: 15px; }
+    .country-name { font-weight: 500; font-size: 15px; }
+    .country-code { color: var(--primary); background: #f0f7ff; padding: 4px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 15px; }
+    .no-results { text-align: center; color: #888; padding: 20px; }
     
-    /* ================= AI 对话框样式 (核心调整区) ================= */
-    /* ai-container 设置 flex: 1，强制撑满右侧面板剩余的所有高度 */
+    /* ================= AI 对话框样式 ================= */
     .ai-container { display: flex; flex-direction: column; flex: 1; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
     .ai-tabs { display: flex; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-    .ai-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 14px; }
+    .ai-tab { flex: 1; text-align: center; padding: 14px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 15px; }
     .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
     .ai-tab:hover:not(.active) { background: #e8e8e8; }
     
-    /* 取消了 max-height，让其根据父级容器自由伸展，填满标签页和输入框之间的空隙 */
-    .chat-window { flex: 1; padding: 15px; overflow-y: auto; background: #fafafa; min-height: 300px; display: flex; flex-direction: column; gap: 12px; }
+    .chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; min-height: 400px; display: flex; flex-direction: column; gap: 15px; }
     
     .msg-row { display: flex; width: 100%; }
     .msg-row.user { justify-content: flex-end; }
     .msg-row.ai { justify-content: flex-start; }
-    .msg-bubble { max-width: 90%; padding: 10px 14px; border-radius: 8px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+    .msg-bubble { max-width: 90%; padding: 12px 16px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
     .msg-row.user .msg-bubble { background: var(--msg-user); color: #0d47a1; border-bottom-right-radius: 2px; }
     .msg-row.ai .msg-bubble { background: var(--msg-ai); color: #333; border-bottom-left-radius: 2px; }
     
-    .msg-row.ai-adv { justify-content: flex-start; margin-top: -4px; }
-    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 13px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
+    .msg-row.ai-adv { justify-content: flex-start; margin-top: -5px; }
+    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 14px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
 
     .loading-dots::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
     @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
     
-    /* 输入框区域自动固定在最底部 */
-    .ai-input-area { padding: 12px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 8px; }
-    .ai-input-area input { flex: 1; padding: 10px; font-size: 14px; }
-    .ai-input-area button { padding: 0 15px; background: var(--primary); color: white; font-weight: 600; font-size: 14px; }
+    .ai-input-area { padding: 15px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 10px; }
+    .ai-input-area input { flex: 1; padding: 12px 15px; font-size: 15px; }
+    .ai-input-area button { padding: 0 25px; background: var(--primary); color: white; font-weight: 600; font-size: 16px; }
     .ai-input-area button:hover { background: var(--hover); }
     .ai-input-area button:disabled { background: #ccc; cursor: not-allowed; }
 
-    .footer { text-align: center; width: 100%; margin-top: 15px; color: #777; font-size: 13px; border-top: 1px solid #eee; padding-top: 10px; }
+    .footer { text-align: center; width: 100%; margin-top: 20px; color: #777; font-size: 14px; border-top: 1px solid #eee; padding-top: 15px; }
     .copyright { font-weight: 500; color: #555; }
 
     .copied-success { background: #4caf50 !important; color: white !important; }
@@ -107,22 +112,22 @@
 <div class="container">
     <h1><span class="title-main">前台快捷工具</span><span class="title-by">By Alan</span></h1>
     
-    <div class="left-panel">
-        
-        <div class="section-title" style="margin-top: 0;">转首字母大写</div>
-        <div class="input-group" style="margin-bottom: 15px;">
+    <!-- 第1栏：文本与日期处理 -->
+    <div class="panel-left">
+        <div class="section-title">转首字母大写</div>
+        <div class="input-group" style="margin-bottom: 25px;">
             <div class="manual-input">
-                <input type="text" id="nameCaseInput" placeholder="输入全大写名字，如：DOMINGUES DE OLIVEIRA">
+                <input type="text" id="nameCaseInput" placeholder="输入全大写名字，如：DOMINGUES">
                 <button id="convertCaseBtn" style="background: #7bb0ee; color: white;">转换并复制</button>
             </div>
-            <div class="result" id="nameCaseResult" style="font-size: 16px; color: var(--primary); display: none; margin-top: 10px; padding: 8px; background: #f0f7ff; border-radius: 6px; border: 1px solid #c5d9f1;"></div>
+            <div class="result" id="nameCaseResult" style="font-size: 18px; color: var(--primary); display: none; margin-top: 12px; padding: 10px; background: #f0f7ff; border-radius: 6px; border: 1px solid #c5d9f1;"></div>
         </div>
 
         <div class="section-title">入境有效期计算</div>
         <div class="input-group">
             <label for="startDate">入境日期</label>
             <div class="date-input-container">
-                <input type="text" id="startDate" placeholder="如：2026/07/15 或 2026-07-15">
+                <input type="text" id="startDate" placeholder="如：2026/07/15">
                 <input type="date" id="startDatePicker">
             </div>
             <div class="date-action-btns">
@@ -145,34 +150,38 @@
             <div class="manual-input-container">
                 <span class="manual-label">手动输入</span>
                 <div class="manual-input">
-                    <input type="number" id="daysToAdd" min="1" placeholder="输入其他天数">
+                    <input type="number" id="daysToAdd" min="1" placeholder="其他天数">
                     <button id="manualCalculateBtn">计算</button>
                 </div>
             </div>
             <div class="error" id="daysError">请输入有效的天数（≥1）</div>
         </div>
         
-        <div class="result-group" style="margin-top: 15px;">
+        <div class="result-group">
             <div class="result-label">计算结果</div>
-            <div class="result" id="result">请输入入境日期和停留天数进行计算</div>
+            <div class="result" id="result">请输入入境日期和停留天数</div>
             <div class="result-details" id="resultDetails"></div>
         </div>
-        
-        <div class="section-title country-title">免签国家查询（79+2）</div>
+    </div>
+
+    <!-- 第2栏：免签国家查询 -->
+    <div class="panel-mid">
+        <div class="section-title">免签国家查询（79+2）</div>
         <div class="country-search-container">
-            <input type="text" id="countrySearch" placeholder="输入国家名称或代码">
+            <input type="text" id="countrySearch" placeholder="输入名称或代码">
             <button id="searchBtn">查找</button>
         </div>
-        <div class="show-all-container">
-            <button class="show-all-countries" id="showAllBtn">显示全部</button>
+        <div class="show-all-container" style="margin-top: 10px;">
+            <button class="show-all-countries" id="showAllBtn">显示全部免签国家</button>
         </div>
         <div class="country-results" id="countryResults">
             <div class="country-results-header">请输入关键词进行查询</div>
         </div>
     </div>
 
-    <div class="right-panel">
-        <div class="section-title" style="border-bottom:none; margin-bottom:5px; margin-top: 0;">英语助理</div>
+    <!-- 第3栏：AI 英语助理 -->
+    <div class="panel-right">
+        <div class="section-title">英语助理</div>
         <div class="ai-container">
             <div class="ai-tabs">
                 <div class="ai-tab active" data-action="pronunciation">发音辅助</div>
@@ -180,10 +189,8 @@
                 <div class="ai-tab" data-action="long_translation">长文翻译</div>
             </div>
 
-            <!-- 聊天框，会自动占满中间的所有可用高度 -->
             <div class="chat-window" id="chatWindow"></div>
             
-            <!-- 输入框，因为上面的 chat-window 撑开了，这里会被死死压在最底部 -->
             <div class="ai-input-area">
                 <input type="text" id="aiInput" placeholder="输入外宾姓名，例如：Schmidt">
                 <button id="aiSendBtn">发送</button>
@@ -240,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nameCaseInput.addEventListener('keypress', e => e.key === 'Enter' && convertNameCase());
 
 
-    // ======== 左侧原逻辑 + 全局实时联动刷新 ========
+    // ======== 日期计算原逻辑 + 全局实时联动刷新 ========
     const els = {
         sDate: $('startDate'), sPicker: $('startDatePicker'), days: $('daysToAdd'),
         calcBtn: $('manualCalculateBtn'), res: $('result'), resDet: $('resultDetails'),
@@ -320,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.sPicker.value = fmt(d, '-'); 
             if (els.days.value) calc();
         } else if (this.value === '') {
-            els.res.innerText = '请输入入境日期和停留天数进行计算';
+            els.res.innerText = '请输入入境日期和停留天数';
             els.resDet.innerText = '';
             els.dErr.style.display = 'none';
         }
@@ -329,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     els.days.addEventListener('input', function() {
         clearQuick();
         if (this.value === '') {
-            els.res.innerText = '请输入入境日期和停留天数进行计算';
+            els.res.innerText = '请输入入境日期和停留天数';
             els.resDet.innerText = '';
             els.dayErr.style.display = 'none';
         } else {
@@ -363,8 +370,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updatePlaceholder = (action) => {
         if(action === 'pronunciation') aiInput.placeholder = "输入外宾姓名，例如：Schmidt";
-        else if (action === 'short_translation') aiInput.placeholder = "输入短语（限中6字/英8词，禁中英混输）";
-        else aiInput.placeholder = "输入长文（限中100字/英200词，禁中英混输）";
+        else if (action === 'short_translation') aiInput.placeholder = "输入短语（限中6字/英8词）";
+        else aiInput.placeholder = "输入长文（限中100字/英200词）";
     }
 
     aiTabs.forEach(tab => {
