@@ -7,38 +7,43 @@
 <style>
     :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; --msg-user: #e3f2fd; --msg-ai: #e8f4f8; --msg-ai-adv: #e8f4f8; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; }
-    .container { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 30px; width: 100%; max-width: 1100px; display: flex; gap: 30px; flex-wrap: wrap; }
+    /* 调整了 body 的 padding，让主体更靠上 */
+    body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
+    /* 容器内边距和间距收紧 */
+    .container { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px; width: 100%; max-width: 1100px; display: flex; gap: 20px; flex-wrap: wrap; }
     .left-panel, .right-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
     
-    h1 { color: var(--txt); text-align: center; margin-bottom: 25px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
-    .title-main { font-size: 28px; }
-    .title-by { font-size: 18px; color: var(--txt-sec); font-weight: 500; }
-    .section-title { font-size: 22px; color: var(--primary); margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #eaeaea; }
+    /* 标题间距压缩 */
+    h1 { color: var(--txt); text-align: center; margin-bottom: 15px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
+    .title-main { font-size: 26px; }
+    .title-by { font-size: 16px; color: var(--txt-sec); font-weight: 500; }
+    .section-title { font-size: 20px; color: var(--primary); margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #eaeaea; }
     .section-title:first-child { margin-top: 0; }
     
-    .input-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+    /* 输入组间距压缩 */
+    .input-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; color: #555; font-weight: 500; font-size: 14px; }
     .date-input-container { position: relative; display: flex; }
     .date-input-container input[type="text"] { flex: 1; padding-right: 50px; }
     .date-input-container input[type="date"] { position: absolute; right: 0; width: 50px; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-    .date-input-container::after { content: " 📅 "; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 18px; z-index: 1; }
-    input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: 0.3s; }
+    .date-input-container::after { content: " 📅 "; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px; z-index: 1; }
+    input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; transition: 0.3s; }
     input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
     
-    .result-group { margin-top: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary); }
-    .result-label { font-weight: 500; color: #555; margin-bottom: 10px; }
-    .result { font-size: 22px; color: var(--txt); font-weight: 600; }
-    .result-details, .date-hint, .error, .manual-label { font-size: 14px; color: var(--txt-sec); }
+    /* 结果面板高度和间距压缩 */
+    .result-group { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary); }
+    .result-label { font-weight: 500; color: #555; margin-bottom: 8px; font-size: 14px;}
+    .result { font-size: 20px; color: var(--txt); font-weight: 600; }
+    .result-details, .date-hint, .error, .manual-label { font-size: 13px; color: var(--txt-sec); }
     .date-hint { font-size: 12px; color: #888; margin-top: 5px; }
     .error { color: var(--err); display: none; margin-top: 5px; }
     
-    button { cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; font-size: 16px; }
-    .calculate-btn, .search-btn { background: var(--primary); color: white; padding: 12px 20px; width: 100%; margin-top: 10px; }
+    button { cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; font-size: 15px; }
+    .calculate-btn, .search-btn { background: var(--primary); color: white; padding: 10px 15px; width: 100%; margin-top: 10px; }
     .calculate-btn:hover, .search-btn:hover { background: var(--hover); }
     
-    .quick-days { display: flex; gap: 8px; margin-bottom: 15px; }
-    .quick-day-btn { flex: 1; background: #7bb0ee; color: white; padding: 12px 5px; font-weight: 600; }
+    .quick-days { display: flex; gap: 8px; margin-bottom: 12px; }
+    .quick-day-btn { flex: 1; background: #7bb0ee; color: white; padding: 8px 5px; font-weight: 600; }
     .quick-day-btn:hover { background: #6ba0de; }
     .quick-day-btn.active { background: #5b90ce; box-shadow: 0 0 0 2px rgba(91, 144, 206, 0.3); }
     
@@ -50,54 +55,54 @@
     .country-search-container button:hover { background: #6ba0de; }
     .manual-input button { padding: 0 20px; }
     
-    /* 日期微调操作按钮组 */
     .date-action-btns { display: flex; gap: 8px; margin-top: 8px; }
     .today-btn { padding: 6px 10px; font-size: 12px; }
     
-    .show-all-container { text-align: right; margin-bottom: 15px; }
+    .show-all-container { text-align: right; margin-bottom: 10px; }
     .show-all-countries { padding: 6px 12px; font-size: 13px; }
     .manual-input button:hover, .today-btn:hover, .show-all-countries:hover { background: #e0e0e0; }
 
-    .country-results { margin-top: 15px; max-height: 250px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 10px; }
-    .country-results-header { font-size: 14px; color: var(--txt-sec); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #f0f0f0; }
-    .country-item { padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    /* 降低国家列表高度 */
+    .country-results { margin-top: 10px; max-height: 160px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 10px; }
+    .country-results-header { font-size: 13px; color: var(--txt-sec); margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #f0f0f0; }
+    .country-item { padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
     .country-item:last-child { border-bottom: none; }
-    .country-name { font-weight: 500; }
-    .country-code { color: var(--primary); background: #f0f7ff; padding: 4px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 15px; }
-    .no-results { text-align: center; color: #888; padding: 20px; }
+    .country-name { font-weight: 500; font-size: 14px; }
+    .country-code { color: var(--primary); background: #f0f7ff; padding: 3px 6px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 14px; }
+    .no-results { text-align: center; color: #888; padding: 15px; }
     
     /* ================= AI 对话框样式 ================= */
     .ai-container { display: flex; flex-direction: column; height: 100%; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
     .ai-tabs { display: flex; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-    .ai-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 15px; }
+    .ai-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 14px; }
     .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
     .ai-tab:hover:not(.active) { background: #e8e8e8; }
     
-    .chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; min-height: 400px; display: flex; flex-direction: column; gap: 15px; }
+    /* 核心修改点：大幅压缩 chat-window 的基础高度，并限定最大高度 */
+    .chat-window { flex: 1; padding: 15px; overflow-y: auto; background: #fafafa; min-height: 250px; max-height: 350px; display: flex; flex-direction: column; gap: 12px; }
+    
     .msg-row { display: flex; width: 100%; }
     .msg-row.user { justify-content: flex-end; }
     .msg-row.ai { justify-content: flex-start; }
-    .msg-bubble { max-width: 90%; padding: 12px 16px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+    .msg-bubble { max-width: 90%; padding: 10px 14px; border-radius: 8px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
     .msg-row.user .msg-bubble { background: var(--msg-user); color: #0d47a1; border-bottom-right-radius: 2px; }
     .msg-row.ai .msg-bubble { background: var(--msg-ai); color: #333; border-bottom-left-radius: 2px; }
     
-    /* 进阶框：左侧高亮细边 */
-    .msg-row.ai-adv { justify-content: flex-start; margin-top: -5px; }
-    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 14px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
+    .msg-row.ai-adv { justify-content: flex-start; margin-top: -4px; }
+    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 13px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
 
     .loading-dots::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
     @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
     
-    .ai-input-area { padding: 15px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 10px; }
-    .ai-input-area input { flex: 1; }
-    .ai-input-area button { padding: 0 20px; background: var(--primary); color: white; font-weight: 600; }
+    .ai-input-area { padding: 12px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 8px; }
+    .ai-input-area input { flex: 1; padding: 10px; font-size: 14px; }
+    .ai-input-area button { padding: 0 15px; background: var(--primary); color: white; font-weight: 600; font-size: 14px; }
     .ai-input-area button:hover { background: var(--hover); }
     .ai-input-area button:disabled { background: #ccc; cursor: not-allowed; }
 
-    .footer { text-align: center; width: 100%; margin-top: 25px; color: #777; font-size: 14px; border-top: 1px solid #eee; padding-top: 15px; }
+    .footer { text-align: center; width: 100%; margin-top: 15px; color: #777; font-size: 13px; border-top: 1px solid #eee; padding-top: 10px; }
     .copyright { font-weight: 500; color: #555; }
 
-    /* 转首字母大写特效 */
     .copied-success { background: #4caf50 !important; color: white !important; }
 </style>
 </head>
@@ -105,17 +110,15 @@
 <div class="container">
     <h1><span class="title-main">前台快捷工具</span><span class="title-by">By Alan</span></h1>
     
-    <!-- 左侧面板 -->
     <div class="left-panel">
         
-        <!-- 转首字母大写工具 -->
         <div class="section-title" style="margin-top: 0;">转首字母大写</div>
         <div class="input-group" style="margin-bottom: 15px;">
             <div class="manual-input">
                 <input type="text" id="nameCaseInput" placeholder="输入全大写名字，如：DOMINGUES DE OLIVEIRA">
                 <button id="convertCaseBtn" style="background: #7bb0ee; color: white;">转换并复制</button>
             </div>
-            <div class="result" id="nameCaseResult" style="font-size: 18px; color: var(--primary); display: none; margin-top: 15px; padding: 10px; background: #f0f7ff; border-radius: 6px; border: 1px solid #c5d9f1;"></div>
+            <div class="result" id="nameCaseResult" style="font-size: 16px; color: var(--primary); display: none; margin-top: 10px; padding: 8px; background: #f0f7ff; border-radius: 6px; border: 1px solid #c5d9f1;"></div>
         </div>
 
         <div class="section-title">入境有效期计算</div>
@@ -125,7 +128,6 @@
                 <input type="text" id="startDate" placeholder="如：2026/07/15 或 2026-07-15">
                 <input type="date" id="startDatePicker">
             </div>
-            <!-- 日期微调按钮组 -->
             <div class="date-action-btns">
                 <button class="today-btn" id="todayBtn">设为今天</button>
                 <button class="today-btn" id="nextDayBtn">日期 +1</button>
@@ -153,7 +155,7 @@
             <div class="error" id="daysError">请输入有效的天数（≥1）</div>
         </div>
         
-        <div class="result-group" style="margin-top: 20px;">
+        <div class="result-group" style="margin-top: 15px;">
             <div class="result-label">计算结果</div>
             <div class="result" id="result">请输入入境日期和停留天数进行计算</div>
             <div class="result-details" id="resultDetails"></div>
@@ -161,18 +163,17 @@
         
         <div class="section-title country-title">免签国家查询（79+2）</div>
         <div class="country-search-container">
-            <input type="text" id="countrySearch" placeholder="输入国家名称或代码，如：泰国 或 THA">
+            <input type="text" id="countrySearch" placeholder="输入国家名称或代码">
             <button id="searchBtn">查找</button>
         </div>
         <div class="show-all-container">
-            <button class="show-all-countries" id="showAllBtn">显示全部免签国家</button>
+            <button class="show-all-countries" id="showAllBtn">显示全部</button>
         </div>
         <div class="country-results" id="countryResults">
-            <div class="country-results-header">请输入关键词进行查询或点击"显示全部免签国家"</div>
+            <div class="country-results-header">请输入关键词进行查询</div>
         </div>
     </div>
 
-    <!-- 右侧面板：英语助理 -->
     <div class="right-panel">
         <div class="section-title" style="border-bottom:none; margin-bottom:5px; margin-top: 0;">英语助理</div>
         <div class="ai-container">
@@ -182,7 +183,6 @@
                 <div class="ai-tab" data-action="long_translation">长文翻译</div>
             </div>
 
-            <!-- 对话窗口 -->
             <div class="chat-window" id="chatWindow"></div>
             
             <div class="ai-input-area">
@@ -199,7 +199,6 @@
 
 <script>
 // ==================== 全局配置 ====================
-// 保持你的域名指向配置
 const API_URL = "https://api.alanwangsx.xyz";
 // =================================================
 
@@ -267,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const clearQuick = () => els.qBtns.forEach(b => b.classList.remove('active'));
     
-    // 核心计算逻辑
     const calc = () => {
         els.dErr.style.display = els.dayErr.style.display = 'none';
         const d = parse(els.sDate.value);
@@ -280,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         els.resDet.innerHTML = `<div>（有效期至，从 ${fmt(d)} 起算 ${days} 天）</div>`;
     };
     
-    // 设为今天
     const setToday = () => { 
         const now = new Date(); 
         els.sDate.value = fmt(now); 
@@ -288,7 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (els.days.value) calc(); 
     };
 
-    // 日期微调 (+1 / -1)
     const adjustDate = (offset) => {
         const current = parse(els.sDate.value);
         if (current) {
@@ -303,13 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setToday();
     
-    // ====== 绑定所有联动事件 ======
-
     els.today.addEventListener('click', setToday);
     els.prevDayBtn.addEventListener('click', () => adjustDate(-1));
     els.nextDayBtn.addEventListener('click', () => adjustDate(1));
     
-    // 点击快速天数
     els.qBtns.forEach(btn => btn.addEventListener('click', function() { 
         clearQuick(); 
         this.classList.add('active'); 
@@ -317,13 +310,11 @@ document.addEventListener('DOMContentLoaded', () => {
         calc(); 
     }));
     
-    // 在日历选择器里挑日子（瞬间触发联动）
     els.sPicker.addEventListener('change', function() { 
         els.sDate.value = fmt(new Date(this.value)); 
         if (els.days.value) calc();
     });
     
-    // 手动修改前面的日期框（瞬间触发联动）
     els.sDate.addEventListener('change', function() { 
         const d = parse(this.value); 
         if (d) {
@@ -336,11 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 实时监听天数输入框：用户正在打字时就触发刷新
     els.days.addEventListener('input', function() {
         clearQuick();
         if (this.value === '') {
-            // 如果用户删光了数字，恢复默认提示，不报错
             els.res.innerText = '请输入入境日期和停留天数进行计算';
             els.resDet.innerText = '';
             els.dayErr.style.display = 'none';
@@ -349,19 +338,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 兜底保留：为了老习惯点击计算按钮的人
     els.calcBtn.addEventListener('click', () => { clearQuick(); calc(); });
 
-    // ----------------------------------
-
     const renderCountries = list => {
-        if (!list.length) return els.cRes.innerHTML = '<div class="country-results-header">以下是搜索到的免签国家：</div><div class="no-results">未找到匹配的国家</div>';
+        if (!list.length) return els.cRes.innerHTML = '<div class="country-results-header">没有匹配的国家</div>';
         const html = list.map(c => `<div class="country-item"><span class="country-name">${c.name}</span><span class="country-code">${c.code}</span></div>`).join('');
-        els.cRes.innerHTML = `<div class="country-results-header">以下是搜索到的免签国家：</div>${html}`;
+        els.cRes.innerHTML = html;
     };
     const search = () => {
         const term = els.search.value.trim().toLowerCase();
-        if (!term) return els.cRes.innerHTML = '<div class="country-results-header">请输入关键词进行查询或点击"显示全部免签国家"</div>';
+        if (!term) return els.cRes.innerHTML = '<div class="country-results-header">请输入关键词进行查询</div>';
         renderCountries(countries.filter(c => c.name.includes(term) || c.code.toLowerCase().includes(term)));
     };
     els.sBtn.addEventListener('click', search);
