@@ -7,20 +7,17 @@
 <style>
     :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; --msg-user: #e3f2fd; --msg-ai: #e8f4f8; --msg-ai-adv: #e8f4f8; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    /* 调整了 body 的 padding，让主体更靠上 */
+    
     body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
-    /* 容器内边距和间距收紧 */
     .container { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px; width: 100%; max-width: 1100px; display: flex; gap: 20px; flex-wrap: wrap; }
     .left-panel, .right-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
     
-    /* 标题间距压缩 */
     h1 { color: var(--txt); text-align: center; margin-bottom: 15px; font-weight: 600; display: flex; justify-content: center; align-items: baseline; gap: 8px; width: 100%; }
     .title-main { font-size: 26px; }
     .title-by { font-size: 16px; color: var(--txt-sec); font-weight: 500; }
     .section-title { font-size: 20px; color: var(--primary); margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #eaeaea; }
     .section-title:first-child { margin-top: 0; }
     
-    /* 输入组间距压缩 */
     .input-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 6px; color: #555; font-weight: 500; font-size: 14px; }
     .date-input-container { position: relative; display: flex; }
@@ -30,7 +27,6 @@
     input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; transition: 0.3s; }
     input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
     
-    /* 结果面板高度和间距压缩 */
     .result-group { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary); }
     .result-label { font-weight: 500; color: #555; margin-bottom: 8px; font-size: 14px;}
     .result { font-size: 20px; color: var(--txt); font-weight: 600; }
@@ -62,7 +58,6 @@
     .show-all-countries { padding: 6px 12px; font-size: 13px; }
     .manual-input button:hover, .today-btn:hover, .show-all-countries:hover { background: #e0e0e0; }
 
-    /* 降低国家列表高度 */
     .country-results { margin-top: 10px; max-height: 160px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 6px; padding: 10px; }
     .country-results-header { font-size: 13px; color: var(--txt-sec); margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #f0f0f0; }
     .country-item { padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
@@ -71,15 +66,16 @@
     .country-code { color: var(--primary); background: #f0f7ff; padding: 3px 6px; border-radius: 4px; font-weight: 600; border: 1px solid #c5d9f1; font-size: 14px; }
     .no-results { text-align: center; color: #888; padding: 15px; }
     
-    /* ================= AI 对话框样式 ================= */
-    .ai-container { display: flex; flex-direction: column; height: 100%; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
+    /* ================= AI 对话框样式 (核心调整区) ================= */
+    /* ai-container 设置 flex: 1，强制撑满右侧面板剩余的所有高度 */
+    .ai-container { display: flex; flex-direction: column; flex: 1; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
     .ai-tabs { display: flex; background: #f0f0f0; border-bottom: 1px solid #ddd; }
     .ai-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 14px; }
     .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
     .ai-tab:hover:not(.active) { background: #e8e8e8; }
     
-    /* 核心修改点：大幅压缩 chat-window 的基础高度，并限定最大高度 */
-    .chat-window { flex: 1; padding: 15px; overflow-y: auto; background: #fafafa; min-height: 250px; max-height: 350px; display: flex; flex-direction: column; gap: 12px; }
+    /* 取消了 max-height，让其根据父级容器自由伸展，填满标签页和输入框之间的空隙 */
+    .chat-window { flex: 1; padding: 15px; overflow-y: auto; background: #fafafa; min-height: 300px; display: flex; flex-direction: column; gap: 12px; }
     
     .msg-row { display: flex; width: 100%; }
     .msg-row.user { justify-content: flex-end; }
@@ -94,6 +90,7 @@
     .loading-dots::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
     @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
     
+    /* 输入框区域自动固定在最底部 */
     .ai-input-area { padding: 12px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 8px; }
     .ai-input-area input { flex: 1; padding: 10px; font-size: 14px; }
     .ai-input-area button { padding: 0 15px; background: var(--primary); color: white; font-weight: 600; font-size: 14px; }
@@ -183,8 +180,10 @@
                 <div class="ai-tab" data-action="long_translation">长文翻译</div>
             </div>
 
+            <!-- 聊天框，会自动占满中间的所有可用高度 -->
             <div class="chat-window" id="chatWindow"></div>
             
+            <!-- 输入框，因为上面的 chat-window 撑开了，这里会被死死压在最底部 -->
             <div class="ai-input-area">
                 <input type="text" id="aiInput" placeholder="输入外宾姓名，例如：Schmidt">
                 <button id="aiSendBtn">发送</button>
