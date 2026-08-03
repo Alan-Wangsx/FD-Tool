@@ -90,29 +90,44 @@
     .msg-row.ai-adv { justify-content: flex-start; margin-top: -5px; }
     .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 14px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
 
-    /* ================= 完美的波浪小黑点动画 (终极修复版) ================= */
+    /* ================= 真正轻盈、优雅的加载动画 ================= */
+    .msg-bubble.loading-bubble {
+        padding: 0 !important;
+        width: 58px !important; /* 宽度微微缩减，更显精致 */
+        height: 42px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .typing-indicator {
         display: flex;
         align-items: center;
-        justify-content: center; /* 让三个点在气泡内部居中 */
-        gap: 5px; /* 点与点的间距 */
-        height: 24px; /* 严格等于一行普通文字的高度 (15px * 1.6 = 24px) */
-        min-width: 40px; /* 核心修复：强制给一个最小宽度，保证气泡呈长方形胶囊状，拒绝正方形！ */
+        justify-content: center;
+        gap: 5px; /* 间距保持呼吸感 */
     }
+
     .typing-indicator span {
-        width: 3.5px; /* 极致缩小的点，告别粗大 */
-        height: 3.5px;
-        background-color: #444; /* 稍微柔和的深灰色/接近黑色 */
+        width: 4px; /* 进一步缩小：纤细的 4px */
+        height: 4px;
+        background-color: #d1d5db; /* 默认使用极浅的银灰色，降低视觉重量 */
         border-radius: 50%;
-        animation: waveBounce 1.4s infinite ease-in-out;
+        animation: typingBounce 1.4s infinite ease-in-out both;
     }
+
     .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
     .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
     .typing-indicator span:nth-child(3) { animation-delay: 0s; }
-    
-    @keyframes waveBounce {
-        0%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-5px); } /* 减小跳动幅度，让动画更加自然丝滑 */
+
+    @keyframes typingBounce {
+        0%, 80%, 100% {
+            transform: translateY(0);
+            background-color: #d1d5db; /* 静止时颜色变浅融合背景 */
+        }
+        40% {
+            transform: translateY(-4px); /* 跳动幅度降为 4px，克制优雅 */
+            background-color: #6b7280; /* 跳起最高点时颜色加深，增加灵动感 */
+        }
     }
     
     .ai-input-area { padding: 15px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 10px; }
@@ -411,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bubble.className = 'msg-bubble';
         
         if (isLoading) {
+            bubble.classList.add('loading-bubble');
             bubble.innerHTML = `
                 <div class="typing-indicator">
                     <span></span><span></span><span></span>
@@ -475,6 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 aiBubble.innerHTML = ''; 
+                aiBubble.classList.remove('loading-bubble');
                 aiBubble.innerText = "抱歉，请求失败，请稍后再试。";
                 aiBubble.style.color = "var(--err)";
                 return; 
@@ -503,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (delta) {
                                     if (isFirstChunk) {
                                         aiBubble.innerHTML = ''; 
+                                        aiBubble.classList.remove('loading-bubble');
                                         isFirstChunk = false;
                                     }
 
@@ -530,6 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             aiBubble.innerHTML = ''; 
+            aiBubble.classList.remove('loading-bubble');
             aiBubble.innerText = "网络请求异常，请检查连接或稍后再试。";
             aiBubble.style.color = "var(--err)";
         } finally {
