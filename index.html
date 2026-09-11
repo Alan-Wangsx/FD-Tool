@@ -552,9 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             proLoading.style.display = "none";
 
-            // 🔥 核心逻辑：如果是大模型判定的“无效输入”，则直接显示红色的警告卡片
-            if (result.phonetic_en === "无效输入") {
-                $('proErrorText').innerText = result.tuning_tips;
+// 🔥 核心逻辑：接收到后端的 "invalid" 暗号，弹出警告卡片
+            if (result.error === "invalid") {
+                $('proErrorText').innerText = "检测到非姓名文本，本工具仅支持外宾姓名解析，请重新输入有效的外宾姓氏或全名。";
                 proErrorCard.style.display = "block";
             } 
             // 正常情况，显示发音卡片
