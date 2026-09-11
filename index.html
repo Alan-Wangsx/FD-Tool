@@ -119,6 +119,19 @@
     .pro-footer { margin-top: 20px; background: #f9f9f9; padding: 12px; border-radius: 6px; font-size: 13px; color: #555; display: flex; gap: 8px; align-items: flex-start; }
     .pro-loading { text-align: center; color: #888; font-size: 14px; display: none; padding: 30px; }
 
+    /* ================= 🚨 新增：拦截错误专用警告卡片 ================= */
+    .pro-error-card { 
+        background: #fffafa; 
+        border: 1px solid #ffcdd2; 
+        border-radius: 10px; 
+        padding: 30px 20px; 
+        text-align: center; 
+        display: none; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02); 
+    }
+    .pro-error-card .error-icon { font-size: 32px; margin-bottom: 12px; }
+    .pro-error-card .error-text { font-size: 15px; color: #d32f2f; font-weight: 500; line-height: 1.6; }
+
     .footer { text-align: center; width: 100%; margin-top: 20px; color: #777; font-size: 14px; border-top: 1px solid #eee; padding-top: 15px; }
     .copyright { font-weight: 500; color: #555; }
     .copied-success { background: #4caf50 !important; color: white !important; }
@@ -192,7 +205,7 @@
         </div>
     </div>
 
-    <!-- 第3栏：外宾姓名发音辅助 (全新独立重构) -->
+    <!-- 第3栏：外宾姓名发音辅助 -->
     <div class="panel-right">
         <div class="section-title">外宾姓名发音辅助</div>
         
@@ -206,7 +219,13 @@
             正在查询语言库，生成地道发音...
         </div>
 
-        <!-- 结果展示卡片 -->
+        <!-- 🚨 新增：无效输入拦截卡片 -->
+        <div class="pro-error-card" id="proErrorCard">
+            <div class="error-icon">⚠️</div>
+            <div class="error-text" id="proErrorText">检测到非姓名文本，本工具仅支持外宾姓名解析，请重新输入。</div>
+        </div>
+
+        <!-- 结果展示卡片 (正常情况) -->
         <div class="pro-card" id="proCard">
             <div class="pro-header">
                 <div class="pro-name" id="proNameRender">Tchaikovsky</div>
@@ -499,12 +518,13 @@ document.addEventListener('DOMContentLoaded', () => {
     els.search.addEventListener('keypress', e => e.key === 'Enter' && searchCountries(els.search.value.trim().toLowerCase()));
 
     // ==========================================================
-    // ======== 模块 4：外宾发音智能解析 (彻底重构为双气泡卡片) ========
+    // ======== 模块 4：外宾发音智能解析 (加入拦截卡片逻辑) ========
     // ==========================================================
     const proInput = $('proInput');
     const proParseBtn = $('proParseBtn');
     const proLoading = $('proLoading');
     const proCard = $('proCard');
+    const proErrorCard = $('proErrorCard');
     const proAudioPlayer = $('proAudioPlayer');
     const proPlayBtn = $('proPlayBtn');
 
@@ -512,10 +532,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = proInput.value.trim();
         if (!name) return;
 
-        // UI 状态切换
+        // 重置所有 UI 状态
         proParseBtn.disabled = true;
         proParseBtn.innerText = "解析中...";
         proCard.style.display = "none";
+        proErrorCard.style.display = "none";
         proLoading.style.display = "block";
 
         try {
@@ -529,22 +550,29 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error("服务器响应异常");
 
             const result = await response.json();
-
-            // 将 JSON 数据填入卡片对应的坑位
-            $('proNameRender').innerText = name;
-            $('proEn').innerText = result.phonetic_en || "解析失败";
-            $('proZh').innerText = result.phonetic_zh || "解析失败";
-            $('proTips').innerText = result.tuning_tips || "";
-            $('proCulture').innerText = result.cultural_notes || "暂无文化背景资料。";
-            
-            // 绑定发音网址 (这个是 Worker 帮你拼接好的 tts 链接)
-            if (result.audio_url) {
-                proAudioPlayer.src = result.audio_url;
-            }
-
-            // UI 渲染完成，显示卡片
             proLoading.style.display = "none";
-            proCard.style.display = "block";
+
+            // 🔥 核心逻辑：如果是大模型判定的“无效输入”，则直接显示红色的警告卡片
+            if (result.phonetic_en === "无效输入") {
+                $('proErrorText').innerText = result.tuning_tips;
+                proErrorCard.style.display = "block";
+            } 
+            // 正常情况，显示发音卡片
+            else {
+                // 将 JSON 数据填入卡片对应的坑位
+                $('proNameRender').innerText = name;
+                $('proEn').innerText = result.phonetic_en || "解析失败";
+                $('proZh').innerText = result.phonetic_zh || "解析失败";
+                $('proTips').innerText = result.tuning_tips || "";
+                $('proCulture').innerText = result.cultural_notes || "暂无文化背景资料。";
+                
+                // 绑定发音网址
+                if (result.audio_url) {
+                    proAudioPlayer.src = result.audio_url;
+                }
+                
+                proCard.style.display = "block";
+            }
 
         } catch (error) {
             alert("抱歉，解析失败，请检查网络或稍后再试。");
