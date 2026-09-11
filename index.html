@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>前台快捷工具 By Alan</title>
 <style>
-    :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; --msg-user: #e3f2fd; --msg-ai: #e8f4f8; --msg-ai-adv: #e8f4f8; }
+    :root { --primary: #4a90e2; --hover: #3a7bc8; --bg: #f5f5f5; --txt: #333; --txt-sec: #666; --err: #e74c3c; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
     body { background-color: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 25px; }
@@ -97,75 +97,30 @@
     .url-txt { font-size: 12px; color: #888; flex: 1; margin-right: 15px; word-break: break-all; }
     .copy-btn { background: #f0f7ff; color: #4a90e2; border: 1px solid #4a90e2; font-size: 12px; padding: 4px 10px; border-radius: 4px; font-weight: bold; white-space: nowrap; cursor: pointer; }
     .copy-btn:hover { background: #4a90e2; color: white; }
-    
-    /* ================= AI 对话框样式 ================= */
-    .ai-container { display: flex; flex-direction: column; flex: 1; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; }
-    .ai-tabs { display: flex; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-    .ai-tab { flex: 1; text-align: center; padding: 14px; cursor: pointer; font-weight: 600; color: #666; transition: 0.3s; font-size: 15px; }
-    .ai-tab.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
-    .ai-tab:hover:not(.active) { background: #e8e8e8; }
-    
-    .chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; min-height: 400px; display: flex; flex-direction: column; gap: 15px; }
-    
-    .msg-row { display: flex; width: 100%; }
-    .msg-row.user { justify-content: flex-end; }
-    .msg-row.ai { justify-content: flex-start; }
-    .msg-bubble { max-width: 90%; padding: 12px 16px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
-    .msg-row.user .msg-bubble { background: var(--msg-user); color: #0d47a1; border-bottom-right-radius: 2px; }
-    .msg-row.ai .msg-bubble { background: var(--msg-ai); color: #333; border-bottom-left-radius: 2px; }
-    
-    .msg-row.ai-adv { justify-content: flex-start; margin-top: -5px; }
-    .msg-row.ai-adv .msg-bubble { background: var(--msg-ai-adv); border-left: 4px solid #82b1ff; font-size: 14px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
 
-    /* ================= 加载动画 ================= */
-    .msg-bubble.loading-bubble {
-        padding: 0 !important;
-        width: 58px !important;
-        height: 42px !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .typing-indicator {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .typing-indicator span {
-        width: 4px;
-        height: 4px;
-        background-color: #d1d5db;
-        border-radius: 50%;
-        animation: typingBounce 1.4s infinite ease-in-out both;
-    }
-
-    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0s; }
-
-    @keyframes typingBounce {
-        0%, 80%, 100% {
-            transform: translateY(0);
-            background-color: #d1d5db;
-        }
-        40% {
-            transform: translateY(-4px);
-            background-color: #6b7280;
-        }
-    }
+    /* ================= 🔥 全新的姓名发音卡片样式 ================= */
+    .pronunciation-container { display: flex; gap: 10px; margin-bottom: 15px; }
+    .pronunciation-container input { flex: 1; padding: 12px 15px; font-size: 15px; }
+    .pronunciation-container button { padding: 0 25px; background: var(--primary); color: white; font-weight: 600; font-size: 15px; }
+    .pronunciation-container button:hover { background: var(--hover); }
+    .pronunciation-container button:disabled { background: #ccc; cursor: not-allowed; }
     
-    .ai-input-area { padding: 15px; background: white; border-top: 1px solid #eaeaea; display: flex; gap: 10px; }
-    .ai-input-area input { flex: 1; padding: 12px 15px; font-size: 15px; }
-    .ai-input-area button { padding: 0 25px; background: var(--primary); color: white; font-weight: 600; font-size: 16px; }
-    .ai-input-area button:hover { background: var(--hover); }
-    .ai-input-area button:disabled { background: #ccc; cursor: not-allowed; }
+    .pro-card { background: #fff; border: 1px solid #eaeaea; border-radius: 10px; padding: 20px; display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .pro-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
+    .pro-name { font-size: 26px; font-weight: bold; color: #2c3e50; }
+    .pro-play-btn { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; border-radius: 50px; padding: 8px 18px; font-weight: bold; display: flex; align-items: center; gap: 6px; font-size: 15px; cursor: pointer; transition: 0.2s;}
+    .pro-play-btn:hover { background: #bbdefb; }
+    .pro-play-btn:active { transform: scale(0.96); }
+    
+    .pro-bubble-group { margin-bottom: 15px; }
+    .pro-text { font-size: 18px; font-weight: bold; color: #333; letter-spacing: 0.5px; }
+    .pro-tips { font-size: 13px; color: #7f8c8d; margin-top: -5px; padding-left: 5px; }
+    
+    .pro-footer { margin-top: 20px; background: #f9f9f9; padding: 12px; border-radius: 6px; font-size: 13px; color: #555; display: flex; gap: 8px; align-items: flex-start; }
+    .pro-loading { text-align: center; color: #888; font-size: 14px; display: none; padding: 30px; }
 
     .footer { text-align: center; width: 100%; margin-top: 20px; color: #777; font-size: 14px; border-top: 1px solid #eee; padding-top: 15px; }
     .copyright { font-weight: 500; color: #555; }
-
     .copied-success { background: #4caf50 !important; color: white !important; }
 </style>
 </head>
@@ -225,7 +180,7 @@
         </div>
     </div>
 
-    <!-- 第2栏：全球免签入境中国政策查询 (新版升级) -->
+    <!-- 第2栏：免签国家查询 -->
     <div class="panel-mid">
         <div class="section-title">全球免签入境中国政策查询</div>
         <div class="country-search-container">
@@ -237,21 +192,50 @@
         </div>
     </div>
 
-    <!-- 第3栏：AI 英语助理 -->
+    <!-- 第3栏：外宾姓名发音辅助 (全新独立重构) -->
     <div class="panel-right">
-        <div class="section-title">英语助理</div>
-        <div class="ai-container">
-            <div class="ai-tabs">
-                <div class="ai-tab active" data-action="pronunciation">发音辅助</div>
-                <div class="ai-tab" data-action="short_translation">短语翻译</div>
-                <div class="ai-tab" data-action="long_translation">长文翻译</div>
+        <div class="section-title">外宾姓名发音辅助</div>
+        
+        <div class="pronunciation-container">
+            <input type="text" id="proInput" placeholder="输入外宾姓名，如：Tchaikovsky">
+            <button id="proParseBtn">解析</button>
+        </div>
+
+        <!-- 加载动画 -->
+        <div class="pro-loading" id="proLoading">
+            正在查询语言库，生成地道发音...
+        </div>
+
+        <!-- 结果展示卡片 -->
+        <div class="pro-card" id="proCard">
+            <div class="pro-header">
+                <div class="pro-name" id="proNameRender">Tchaikovsky</div>
+                <button class="pro-play-btn" id="proPlayBtn">
+                    🔊 朗读发音
+                </button>
+                <audio id="proAudioPlayer" style="display:none;"></audio>
+            </div>
+            
+            <div class="pro-bubble-group">
+                <div class="bubble-row">
+                    <div class="bubble-tag primary">英式拼读</div>
+                    <div class="colon">:</div>
+                    <div class="pro-text" id="proEn">Chy - KOF - skee</div>
+                </div>
             </div>
 
-            <div class="chat-window" id="chatWindow"></div>
-            
-            <div class="ai-input-area">
-                <input type="text" id="aiInput" placeholder="输入外宾姓名，例如：Schmidt">
-                <button id="aiSendBtn">发送</button>
+            <div class="pro-bubble-group" style="margin-bottom: 25px;">
+                <div class="bubble-row">
+                    <div class="bubble-tag primary" style="background:#009688;">中文谐音</div>
+                    <div class="colon">:</div>
+                    <div class="pro-text" id="proZh" style="color:#00796b;">柴 - 考夫 - 斯基</div>
+                </div>
+                <div class="pro-tips" id="proTips">重音在中间的考夫，柴发音短促。</div>
+            </div>
+
+            <div class="pro-footer">
+                <span>💡</span>
+                <span id="proCulture">源于斯拉夫语系。注意：女性客人护照可能为 Tchaikovskaya。</span>
             </div>
         </div>
     </div>
@@ -263,6 +247,7 @@
 
 <script>
 // ==================== 全局配置 ====================
+// 确保这个是你部署好新代码的 Cloudflare Worker 域名
 const API_URL = "https://api.alanwangsx.xyz";
 // =================================================
 
@@ -277,11 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const convertNameCase = () => {
         const text = nameCaseInput.value.trim();
         if (!text) return;
-        
-        const converted = text.toLowerCase().replace(/(?:^|[\s-])\w/g, function(match) {
-            return match.toUpperCase();
-        });
-        
+        const converted = text.toLowerCase().replace(/(?:^|[\s-])\w/g, m => m.toUpperCase());
         nameCaseResult.innerText = converted;
         nameCaseResult.style.display = 'block';
 
@@ -289,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalText = convertCaseBtn.innerText;
             convertCaseBtn.innerText = "已复制！";
             convertCaseBtn.classList.add('copied-success');
-            
             setTimeout(() => {
                 convertCaseBtn.innerText = originalText;
                 convertCaseBtn.classList.remove('copied-success');
@@ -320,8 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const parse = (str) => {
         if(!str) return null;
-        const clean = str.replace(/[年月日-]/g, '/');
-        const d = new Date(clean);
+        const d = new Date(str.replace(/[年月日-]/g, '/'));
         return isNaN(d.getTime()) ? null : d;
     };
     const clearQuick = () => els.qBtns.forEach(b => b.classList.remove('active'));
@@ -358,49 +337,30 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     setToday();
-    
     els.today.addEventListener('click', setToday);
     els.prevDayBtn.addEventListener('click', () => adjustDate(-1));
     els.nextDayBtn.addEventListener('click', () => adjustDate(1));
     
     els.qBtns.forEach(btn => btn.addEventListener('click', function() { 
-        clearQuick(); 
-        this.classList.add('active'); 
-        els.days.value = this.dataset.days; 
-        calc(); 
+        clearQuick(); this.classList.add('active'); els.days.value = this.dataset.days; calc(); 
     }));
     
-    els.sPicker.addEventListener('change', function() { 
-        els.sDate.value = fmt(new Date(this.value)); 
-        if (els.days.value) calc(); 
-    });
-    
+    els.sPicker.addEventListener('change', function() { els.sDate.value = fmt(new Date(this.value)); if (els.days.value) calc(); });
     els.sDate.addEventListener('change', function() { 
         const d = parse(this.value); 
-        if (d) {
-            els.sPicker.value = fmt(d, '-'); 
-            if (els.days.value) calc(); 
-        } else if (this.value === '') {
-            els.res.innerText = '请输入入境日期和停留天数';
-            els.resDet.innerText = '';
-            els.dErr.style.display = 'none';
-        }
+        if (d) { els.sPicker.value = fmt(d, '-'); if (els.days.value) calc(); }
+        else if (this.value === '') { els.res.innerText = '请输入入境日期和停留天数'; els.resDet.innerText = ''; els.dErr.style.display = 'none'; }
     });
 
     els.days.addEventListener('input', function() {
         clearQuick();
-        if (this.value === '') {
-            els.res.innerText = '请输入入境日期和停留天数';
-            els.resDet.innerText = '';
-            els.dayErr.style.display = 'none';
-        } else {
-            calc();
-        }
+        if (this.value === '') { els.res.innerText = '请输入入境日期和停留天数'; els.resDet.innerText = ''; els.dayErr.style.display = 'none'; } 
+        else { calc(); }
     });
 
     els.calcBtn.addEventListener('click', () => { clearQuick(); calc(); });
 
-    // ======== 全球免签政策速查逻辑 (169国数据) ========
+    // ======== 全球免签政策速查逻辑 ========
     const urlMap = {
         1: 'https://www.mfa.gov.cn/wjbzwfwpt/kzx/tzgg/202504/t20250414_11594222.html',
         2: 'https://www.nia.gov.cn/n741440/n741577/c1731154/content.html'
@@ -538,172 +498,75 @@ document.addEventListener('DOMContentLoaded', () => {
     els.sBtn.addEventListener('click', () => searchCountries(els.search.value.trim().toLowerCase()));
     els.search.addEventListener('keypress', e => e.key === 'Enter' && searchCountries(els.search.value.trim().toLowerCase()));
 
-    // ======== 右侧 AI 逻辑 ========
-    const aiTabs = document.querySelectorAll('.ai-tab');
-    const chatWindow = $('chatWindow');
-    const aiInput = $('aiInput');
-    const aiSendBtn = $('aiSendBtn');
-    
-    let currentAction = 'pronunciation'; 
+    // ==========================================================
+    // ======== 模块 4：外宾发音智能解析 (彻底重构为双气泡卡片) ========
+    // ==========================================================
+    const proInput = $('proInput');
+    const proParseBtn = $('proParseBtn');
+    const proLoading = $('proLoading');
+    const proCard = $('proCard');
+    const proAudioPlayer = $('proAudioPlayer');
+    const proPlayBtn = $('proPlayBtn');
 
-    const updatePlaceholder = (action) => {
-        if(action === 'pronunciation') aiInput.placeholder = "输入外宾姓名，例如：Schmidt";
-        else if (action === 'short_translation') aiInput.placeholder = "输入短语（限中6字/英8词）";
-        else aiInput.placeholder = "输入长文（限中100字/英200词）";
-    }
+    const handleParse = async () => {
+        const name = proInput.value.trim();
+        if (!name) return;
 
-    aiTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            aiTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentAction = tab.dataset.action;
-            updatePlaceholder(currentAction);
-            aiInput.value = '';
-            chatWindow.innerHTML = '';
-        });
-    });
-
-    const appendMessage = (text, sender, isLoading = false, type = 'normal') => {
-        const row = document.createElement('div');
-        row.className = `msg-row ${sender === 'ai' && type === 'adv' ? 'ai-adv' : sender}`;
-        const bubble = document.createElement('div');
-        bubble.className = 'msg-bubble';
-        
-        if (isLoading) {
-            bubble.classList.add('loading-bubble');
-            bubble.innerHTML = `
-                <div class="typing-indicator">
-                    <span></span><span></span><span></span>
-                </div>`;
-        } else {
-            bubble.innerText = text; 
-        }
-        
-        row.appendChild(bubble);
-        chatWindow.appendChild(row);
-        chatWindow.scrollTop = chatWindow.scrollHeight; 
-        return bubble; 
-    };
-
-    const preValidate = (action, text) => {
-        if (!text) return { valid: false, msg: null }; 
-
-        const hasChinese = /[\u4e00-\u9fa5]/.test(text);
-        const hasEnglish = /[a-zA-Z]/.test(text);
-
-        if (action === 'short_translation' || action === 'long_translation') {
-            if (hasChinese && hasEnglish) return { valid: false, msg: "请单独输入中文或英文" };
-            
-            if (action === 'short_translation') {
-                if (hasChinese && text.replace(/[^\u4e00-\u9fa5]/g, "").length > 6) return { valid: false, msg: "提示字数超出短语上限（中文限6字）" };
-                if (!hasChinese && text.trim().split(/\s+/).length > 8) return { valid: false, msg: "提示字数超出短语上限（英文限8词）" };
-            } else {
-                if (hasChinese && text.replace(/[^\u4e00-\u9fa5]/g, "").length > 100) return { valid: false, msg: "提示字数超出长文上限（中文限100字）" };
-                if (!hasChinese && text.trim().split(/\s+/).length > 200) return { valid: false, msg: "提示字数超出长文上限（英文限200词）" };
-            }
-        }
-        return { valid: true };
-    };
-
-    const handleSend = async () => {
-        const text = aiInput.value.trim();
-
-        if (!text) return;
-
-        const validationResult = preValidate(currentAction, text);
-        if (!validationResult.valid && validationResult.msg) {
-            chatWindow.innerHTML = ''; 
-            appendMessage(validationResult.msg, 'ai'); 
-            return; 
-        }
-
-        chatWindow.innerHTML = '';
-        appendMessage(text, 'user');
-        aiInput.value = '';
-        aiInput.focus();
-        
-        aiSendBtn.disabled = true;
-        aiInput.disabled = true;
-        let aiBubble = appendMessage('', 'ai', true); 
+        // UI 状态切换
+        proParseBtn.disabled = true;
+        proParseBtn.innerText = "解析中...";
+        proCard.style.display = "none";
+        proLoading.style.display = "block";
 
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: currentAction, text: text })
+            // 向你的 Cloudflare Worker 发送请求
+            const response = await fetch(API_URL + "/api/name-parse", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name })
             });
 
-            if (!response.ok) {
-                aiBubble.innerHTML = ''; 
-                aiBubble.classList.remove('loading-bubble');
-                aiBubble.innerText = "抱歉，请求失败，请稍后再试。";
-                aiBubble.style.color = "var(--err)";
-                return; 
-            }
-            
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            let done = false;
-            let buffer = ""; 
-            let hasSplit = false; 
-            
-            let isFirstChunk = true; 
+            if (!response.ok) throw new Error("服务器响应异常");
 
-            while (!done) {
-                const { value, done: readerDone } = await reader.read();
-                done = readerDone;
-                if (value) {
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
-                    for (const line of lines) {
-                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                            try {
-                                const parsed = JSON.parse(line.slice(6));
-                                const delta = parsed.choices[0].delta.content;
-                                
-                                if (delta) {
-                                    if (isFirstChunk) {
-                                        aiBubble.innerHTML = ''; 
-                                        aiBubble.classList.remove('loading-bubble');
-                                        isFirstChunk = false;
-                                    }
+            const result = await response.json();
 
-                                    if (currentAction === 'pronunciation' && !hasSplit) {
-                                        buffer += delta;
-                                        if (buffer.includes('|||')) {
-                                            hasSplit = true;
-                                            const parts = buffer.split('|||');
-                                            aiBubble.innerText = parts[0].trim(); 
-                                            // 创建进阶气泡
-                                            aiBubble = appendMessage(parts[1].trimStart(), 'ai', false, 'adv');
-                                        } else {
-                                            aiBubble.innerText += delta;
-                                        }
-                                    } else {
-                                        aiBubble.innerText += delta;
-                                    }
-                                    chatWindow.scrollTop = chatWindow.scrollHeight; 
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                }
+            // 将 JSON 数据填入卡片对应的坑位
+            $('proNameRender').innerText = name;
+            $('proEn').innerText = result.phonetic_en || "解析失败";
+            $('proZh').innerText = result.phonetic_zh || "解析失败";
+            $('proTips').innerText = result.tuning_tips || "";
+            $('proCulture').innerText = result.cultural_notes || "暂无文化背景资料。";
+            
+            // 绑定发音网址 (这个是 Worker 帮你拼接好的 tts 链接)
+            if (result.audio_url) {
+                proAudioPlayer.src = result.audio_url;
             }
+
+            // UI 渲染完成，显示卡片
+            proLoading.style.display = "none";
+            proCard.style.display = "block";
 
         } catch (error) {
-            aiBubble.innerHTML = ''; 
-            aiBubble.classList.remove('loading-bubble');
-            aiBubble.innerText = "网络请求异常，请检查连接或稍后再试。";
-            aiBubble.style.color = "var(--err)";
+            alert("抱歉，解析失败，请检查网络或稍后再试。");
+            proLoading.style.display = "none";
         } finally {
-            aiSendBtn.disabled = false;
-            aiInput.disabled = false;
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            proParseBtn.disabled = false;
+            proParseBtn.innerText = "解析";
         }
     };
 
-    aiSendBtn.addEventListener('click', handleSend);
-    aiInput.addEventListener('keypress', e => e.key === 'Enter' && handleSend());
+    proParseBtn.addEventListener('click', handleParse);
+    proInput.addEventListener('keypress', e => e.key === 'Enter' && handleParse());
+
+    // 点击小喇叭播放声音
+    proPlayBtn.addEventListener('click', () => {
+        if(proAudioPlayer.src) {
+            // 播放前重置时间
+            proAudioPlayer.currentTime = 0;
+            proAudioPlayer.play().catch(e => alert("音频加载失败，请重试"));
+        }
+    });
+
 });
 </script>
 </body>
